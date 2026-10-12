@@ -67,8 +67,6 @@ A ferramenta segue **cinco regras invioláveis**:
 A quarentena (opcional) apenas **copia** arquivos suspeitos para um diretório
 protegido, com hash SHA-256 e manifesto — nunca move nem apaga o original.
 
----
-
 ## ✨ Principais recursos
 
 ### Coleta
@@ -91,8 +89,6 @@ protegido, com hash SHA-256 e manifesto — nunca move nem apaga o original.
   `/opt/zimbra/log/*.log`, com filtros específicos para não gerar falso positivo
   do `sudo` legítimo do Zimbra e do cron interno
 - **Pacotes**: inventário RPM/DPKG
-
----
 
 ### Dashboard
 
