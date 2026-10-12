@@ -1,1 +1,115 @@
-# -zimbra-threat-hunt
+# 🛡️ Zimbra Threat Hunt
+
+> Triagem forense **read-only** para servidores Zimbra Collaboration, focada em
+> detecção de IOCs de malwares conhecidos: mineradores (XMRig, Minerd),
+> webshells JSP, persistência via cron/systemd, túneis reversos, e
+> indicadores de comprometimento correlacionados.
+
+[![Python](https://img.shields.io/badge/python-3.6%2B-blue.svg)](https://www.python.org/)
+[![Zimbra](https://img.shields.io/badge/Zimbra-8.x-orange.svg)](https://www.zimbra.com/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-RHEL%207%20%7C%208%20%7C%209-lightgrey.svg)]()
+[![Status](https://img.shields.io/badge/status-estável-brightgreen.svg)]()
+
+**Stack:** Python 3 · Bash · HTML/CSS/JS · JSON
+
+---
+
+## 📖 Sumário
+
+- [Sobre](#-sobre)
+- [Princípios](#-princípios)
+- [Principais recursos](#-principais-recursos)
+- [Pipeline](#-pipeline)
+- [Estrutura de saída](#-estrutura-de-saída)
+- [Instalação](#-instalação)
+- [Uso](#-uso)
+- [IOCs configuráveis](#-iocs-configuráveis)
+- [Dashboard HTML](#-dashboard-html)
+- [Limitações](#-limitações)
+- [Contribuindo](#-contribuindo)
+- [Licença](#-licença)
+
+---
+
+## 🎯 Sobre
+
+O **Zimbra Threat Hunt** é uma ferramenta de triagem forense **passiva e
+read-only** para servidores Zimbra Collaboration que precisam responder à
+pergunta: *"este servidor está comprometido?"* — sem tocar no ambiente, sem
+derrubar serviços, sem alterar arquivos.
+
+Foi desenhado para o cenário real de ataques a servidores Zimbra observados
+nos últimos anos:
+
+- **Mineração de criptomoedas** em `/tmp`, `/dev/shm`, `/var/tmp`
+- **Webshells JSP/JSPX** plantadas em `jetty/webapps/zimbra/public/`
+- **Persistência via cron** (`/etc/cron.d/`, crontab de usuário)
+- **Chamadas a C2** a partir de IPs já mapeados
+- **Coleta de evidências correlacionadas** sem custo de interpretação manual
+
+O output é um **relatório forense com score, classificação, achados
+priorizados, correlações e manifesto de integridade** — pronto para ser anexado
+a um ticket de incidente.
+
+---
+
+## 🔒 Princípios
+
+A ferramenta segue **cinco regras invioláveis**:
+
+1. **Não mata processos** — só lê `/proc`
+2. **Não apaga, não edita, não altera permissões** de nada existente
+3. **Não executa amostras** encontradas no disco
+4. **Não abre conexões externas** para C2, não baixa payload
+5. **Não acessa conteúdo de e-mails, senhas ou chaves privadas**
+
+A quarentena (opcional) apenas **copia** arquivos suspeitos para um diretório
+protegido, com hash SHA-256 e manifesto — nunca move nem apaga o original.
+
+---
+
+## ✨ Principais recursos
+
+### Coleta
+
+- **Identificação** de versão do Zimbra, sistema operacional, interfaces
+- **Processos**: varredura de `/proc`, whitelist de kernel threads e processos
+  legítimos do Zimbra, detecção de executáveis em tmp, deletados mas em execução,
+  mismatch entre `comm` e `exe`
+- **Rede**: conexões `established`, matching contra IPs/portas de IOC
+- **Arquivos temporários**: varredura com `find -mtime`, whitelist de subdiretórios
+  internos do Zimbra (`cstrm`, `convertd`, `zmstat`, `nginx`, `.swatchdog_script.*`,
+  `jffi*.tmp`), detecção por nome, hash, magic bytes e shebang
+- **Persistência**: cron de sistema, cron de usuário, systemd units, `rc.local`,
+  com whitelist explícita do Zimbra (`/opt/zimbra/libexec/*`) e deduplicação
+- **SSH**: `authorized_keys` de root, `zimbra` e usuários de `/home`, com
+  fingerprint SHA-256
+- **Webshell**: JSP/JSPX recentes em `jetty/webapps`, com detecção de
+  `Runtime.exec`, `ProcessBuilder`, `defineClass`, `Class.forName` e IOC textual
+- **Logs**: `/var/log/secure`, `/var/log/cron`, `/var/log/maillog`,
+  `/opt/zimbra/log/*.log`, com filtros específicos para não gerar falso positivo
+  do `sudo` legítimo do Zimbra e do cron interno
+- **Pacotes**: inventário RPM/DPKG
+
+### Dashboard
+
+- **Relatório TXT** com resumo executivo, achados, correlações e limitações
+- **Dashboard HTML** dark theme, autocontido (sem dependência externa):
+  - Cards de severidade (CRITICO/ALTO/MEDIO/BAIXO/INFO)
+  - Correlação visual de incidentes
+  - Seções colapsáveis (`<details>`) para achados e IOCs
+  - Botões "Expandir tudo / Recolher tudo"
+- **`resumo.json`** estruturado para automação
+- **`manifesto_evidencias.txt`** com hash SHA-256 de cada arquivo gerado
+
+### Correlação e priorização
+
+- Agrupamento automático por **PID, path normalizado e IOC** → "incidentes"
+- Score de risco **0-100** com pesos por severidade e diversidade de tipos
+- Classificação final: `Comprometimento confirmado`, `Fortes indícios`,
+  `Suspeita`, `Inconclusiva`, `Nenhum indício`
+
+---
+
+## 🔄 Pipeline
