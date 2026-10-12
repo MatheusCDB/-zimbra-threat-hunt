@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br"><head>
+<meta charset="utf-8"><title>Zimbra Forensics v3.0.1 - Relatorio (exemplo)</title>
+<style>
+:root{
+  --bg:#0d1117; --bg2:#161b22; --bg3:#1c2128;
+  --fg:#e6edf3; --fg2:#8b949e; --fg3:#6e7681;
+  --border:#30363d; --border2:#21262d;
+  --accent:#58a6ff; --accent2:#1f6feb;
+  --crit:#f85149; --high:#db6d28; --med:#d29922;
+  --low:#8b949e; --info:#58a6ff; --ok:#3fb950;
+}
+*{box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,
+    "Helvetica Neue",Arial,sans-serif;
+  margin:0;background:var(--bg);color:var(--fg);
+  font-size:14px;line-height:1.5;
+}
+header{
+  background:linear-gradient(180deg,#161b22 0%,#0d1117 100%);
+  border-bottom:1px solid var(--border);
+  padding:22px 28px;
+}
+header h1{margin:0 0 8px;font-size:20px;font-weight:600;color:var(--fg)}
+header .meta{font-size:12.5px;color:var(--fg2);line-height:1.7}
+header .meta code{
+  background:var(--bg3);padding:2px 6px;border-radius:4px;
+  color:var(--accent);font-size:12px;
+}
+main{max-width:1180px;margin:24px auto;padding:0 20px}
+section{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:8px;margin:14px 0;padding:18px 22px;
+}
+h2{
+  font-size:15px;margin:0 0 12px;font-weight:600;
+  color:var(--fg);border-bottom:1px solid var(--border2);
+  padding-bottom:8px;letter-spacing:.2px;
+}
+h3{font-size:14px;color:var(--fg);margin:18px 0 8px;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{
+  padding:8px 10px;text-align:left;vertical-align:top;
+  border-bottom:1px solid var(--border2);
+}
+th{background:var(--bg3);color:var(--fg2);font-weight:500;font-size:12.5px}
+tr:hover td{background:rgba(88,166,255,.04)}
+.score{font-size:32px;font-weight:700;color:var(--accent)}
+.badge{
+  display:inline-block;padding:2px 9px;border-radius:12px;
+  font-size:11px;font-weight:600;color:#fff;
+  letter-spacing:.3px;text-transform:uppercase;
+}
+.sev-crit{background:var(--crit);color:#fff}
+.sev-high{background:var(--high);color:#fff}
+.sev-med{background:var(--med);color:#000}
+.sev-low{background:var(--low);color:#fff}
+.sev-info{background:var(--info);color:#fff}
+details{
+  margin:8px 0;border:1px solid var(--border);
+  border-radius:6px;background:var(--bg3);
+  overflow:hidden;
+}
+details[open]{border-color:var(--accent2)}
+details>summary{
+  cursor:pointer;padding:10px 14px;font-weight:500;
+  list-style:none;position:relative;
+  background:var(--bg3);transition:background .15s;
+  user-select:none;
+}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{
+  content:"▸";display:inline-block;margin-right:8px;
+  color:var(--fg2);transition:transform .15s;
+  font-size:12px;
+}
+details[open]>summary::before{transform:rotate(90deg);color:var(--accent)}
+details>summary:hover{background:#21262d}
+details>summary .badge{margin-right:6px}
+details>div,details>table{
+  border-top:1px solid var(--border2);padding:14px;
+}
+details>table{padding:0}
+details>table th,details>table td{
+  border-bottom:1px solid var(--border2);
+}
+details>table tr:last-child th,details>table tr:last-child td{
+  border-bottom:none;
+}
+details summary .count{
+  color:var(--fg2);font-weight:400;font-size:12px;
+  margin-left:6px;
+}
+pre,code{
+  background:var(--bg);border:1px solid var(--border2);
+  border-radius:4px;padding:10px;overflow:auto;
+  font-size:12px;font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  color:var(--fg);
+}
+code{padding:2px 5px}
+.small{font-size:12px;color:var(--fg2)}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.kpi-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:10px;margin:14px 0;
+}
+.kpi{
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:6px;padding:12px 14px;
+}
+.kpi .label{font-size:11px;color:var(--fg2);text-transform:uppercase;letter-spacing:.5px}
+.kpi .value{font-size:22px;font-weight:600;margin-top:4px}
+.kpi.crit .value{color:var(--crit)}
+.kpi.high .value{color:var(--high)}
+.kpi.med .value{color:var(--med)}
+.kpi.low .value{color:var(--low)}
+.kpi.info .value{color:var(--info)}
+.controls{
+  display:flex;gap:8px;margin:8px 0 14px;flex-wrap:wrap;
+}
+.controls button{
+  background:var(--bg3);color:var(--fg2);
+  border:1px solid var(--border);border-radius:6px;
+  padding:6px 12px;font-size:12px;cursor:pointer;
+  transition:all .15s;
+}
+.controls button:hover{
+  background:var(--accent2);color:#fff;border-color:var(--accent2);
+}
+</style></head><body><header><h1>Zimbra Forensics v3.0.1 - Relatorio de Investigacao de Seguranca</h1><div class="meta">Data: 2026-10-12 10:33:38 -0300 &middot; Host: zimbra.hogwarts.com.br &middot; S.O.: Linux-3.10.0-1160.119.1.el7.x86_64-x86_64-with-centos-7.9.2009-Core &middot; Zimbra: zimbra-core-8.7.11_GA_1854.RHEL7_64-20170531151956.x86_64 &middot; ID: evidence_20261012_103332</div></header><main><section><h2>Resumo Executivo</h2><p>Classificacao: <b>Fortes indicios de comprometimento</b> &nbsp; Score: <span class="score">100</span>/100</p><div class="kpi-grid"><div class="kpi crit"><div class="label">CRITICO</div><div class="value">1</div></div><div class="kpi high"><div class="label">ALTO</div><div class="value">3</div></div><div class="kpi med"><div class="label">MEDIO</div><div class="value">2</div></div><div class="kpi low"><div class="label">BAIXO</div><div class="value">0</div></div><div class="kpi info"><div class="label">INFO</div><div class="value">0</div></div></div><p class="small">Modulos: identify, processes, network, tmpfiles, persistence, ssh, webshell, logs, packages<br>Verificacoes inconclusivas: 1</p></section><section><h2>Informacoes do Sistema</h2><table><tr><th>hostname</th><td>zimbra.hogwarts.com.br</td></tr><tr><th>fqdn</th><td>zmb.hogwarts.com.br</td></tr><tr><th>ips</th><td>[&#x27;10.0.0.10&#x27;, &#x27;10.0.0.11&#x27;]</td></tr><tr><th>os</th><td>Linux-3.10.0-1160.119.1.el7.x86_64-x86_64-with-centos-7.9.2009-Core</td></tr><tr><th>kernel</th><td>3.10.0-1160.119.1.el7.x86_64</td></tr><tr><th>arch</th><td>x86_64</td></tr><tr><th>uptime_h</th><td>178.75</td></tr><tr><th>collected_at</th><td>2026-10-12 10:33:32 -0300</td></tr><tr><th>tz</th><td>[&#x27;-03&#x27;, &#x27;-03&#x27;]</td></tr></table></section><section><h2>Achados de Seguranca e Evidencias</h2><div class="controls"><button onclick="document.querySelectorAll('details.finding').forEach(d=>d.open=true)">Expandir tudo</button><button onclick="document.querySelectorAll('details.finding').forEach(d=>d.open=false)">Recolher tudo</button></div><details class="finding"><summary><span class="badge sev-high">ALTO</span> [F-0001] Arquivo suspeito em tmp - /tmp/w3.sh</summary><table><tr><th>Status</th><td>Evidencia forte</td></tr><tr><th>Confianca</th><td>alta</td></tr><tr><th>Caminho</th><td>/tmp/w3.sh</td></tr><tr><th>Evidencia</th><td>nome corresponde a IOC; script executavel; possui shebang</td></tr><tr><th>Motivo</th><td>arquivo modificado nos ultimos 3 dias em diretorio temporario</td></tr><tr><th>Recomendacao</th><td>Preservar copia antes de qualquer acao; correlacionar com processo/rede.</td></tr></table></details><details class="finding"><summary><span class="badge sev-med">MEDIO</span> [F-0002] Arquivo suspeito em tmp - /tmp/dns-filter.sh</summary><table><tr><th>Status</th><td>Suspeita fundamentada</td></tr><tr><th>Confianca</th><td>media</td></tr><tr><th>Caminho</th><td>/tmp/dns-filter.sh</td></tr><tr><th>Evidencia</th><td>script executavel; possui shebang</td></tr><tr><th>Motivo</th><td>arquivo modificado nos ultimos 3 dias em diretorio temporario</td></tr><tr><th>Recomendacao</th><td>Preservar copia antes de qualquer acao; correlacionar com processo/rede.</td></tr></table></details><details class="finding"><summary><span class="badge sev-high">ALTO</span> [F-0003] Arquivo suspeito em tmp - /tmp/softwaretech</summary><table><tr><th>Status</th><td>Evidencia forte</td></tr><tr><th>Confianca</th><td>alta</td></tr><tr><th>Caminho</th><td>/tmp/softwaretech</td></tr><tr><th>Evidencia</th><td>nome corresponde a IOC; binario ELF</td></tr><tr><th>Motivo</th><td>arquivo modificado nos ultimos 3 dias em diretorio temporario</td></tr><tr><th>Recomendacao</th><td>Preservar copia antes de qualquer acao; correlacionar com processo/rede.</td></tr></table></details><details class="finding"><summary><span class="badge sev-high">ALTO</span> [F-0004] Arquivo suspeito em tmp - /tmp/.swatchd</summary><table><tr><th>Status</th><td>Evidencia forte</td></tr><tr><th>Confianca</th><td>alta</td></tr><tr><th>Caminho</th><td>/tmp/.swatchd</td></tr><tr><th>Evidencia</th><td>arquivo oculto; nome corresponde a IOC; possui shebang</td></tr><tr><th>Motivo</th><td>arquivo modificado nos ultimos 3 dias em diretorio temporario</td></tr><tr><th>Recomendacao</th><td>Preservar copia antes de qualquer acao; correlacionar com processo/rede.</td></tr></table></details><details class="finding" open><summary><span class="badge sev-crit">CRITICO</span> [F-0005] Cron suspeito - /etc/cron.d/ioc_test_cron</summary><table><tr><th>Status</th><td>Evidencia forte</td></tr><tr><th>Confianca</th><td>alta</td></tr><tr><th>Caminho</th><td>/etc/cron.d/ioc_test_cron</td></tr><tr><th>Evidencia</th><td>*/5 * * * * root /tmp/w3.sh &gt;/dev/null 2&gt;&amp;1</td></tr><tr><th>Motivo</th><td>padrao &#x27;w3\.sh&#x27; em arquivo de cron</td></tr><tr><th>Recomendacao</th><td>Nao remover sem preservar copia. Correlacionar com arquivo referenciado.</td></tr></table></details><details class="finding"><summary><span class="badge sev-med">MEDIO</span> [F-0006] Evento em log - /var/log/cron</summary><table><tr><th>Status</th><td>Suspeita fundamentada</td></tr><tr><th>Confianca</th><td>media</td></tr><tr><th>Caminho</th><td>/var/log/cron</td></tr><tr><th>Evidencia</th><td>Oct 12 09:50:01 zimbra CROND[20711]: (root) CMD (/tmp/w3.sh &gt;/dev/null 2&gt;&amp;1) (x9)</td></tr><tr><th>Motivo</th><td>correspondeu a &#x27;execucao em tmp&#x27;</td></tr></table></details></section><section><h2>Referencias e IOCs Utilizados</h2><div class="controls"><button onclick="document.querySelectorAll('details.ioc-group').forEach(d=>d.open=true)">Expandir tudo</button><button onclick="document.querySelectorAll('details.ioc-group').forEach(d=>d.open=false)">Recolher tudo</button></div><details class="ioc-group"><summary><b>Enderecos IP</b><span class="count">(26)</span></summary><table><tr><th>IP</th></tr><tr><td><code>192.0.2.10</code></td></tr><tr><td><code>192.0.2.11</code></td></tr><tr><td><code>192.0.2.12</code></td></tr><tr><td><code>192.0.2.13</code></td></tr><tr><td><code>192.0.2.14</code></td></tr><tr><td><code>192.0.2.15</code></td></tr><tr><td><code>192.0.2.16</code></td></tr><tr><td><code>192.0.2.17</code></td></tr><tr><td><code>192.0.2.18</code></td></tr><tr><td><code>192.0.2.19</code></td></tr><tr><td><code>198.51.100.10</code></td></tr><tr><td><code>198.51.100.11</code></td></tr><tr><td><code>198.51.100.12</code></td></tr><tr><td><code>198.51.100.13</code></td></tr><tr><td><code>198.51.100.14</code></td></tr><tr><td><code>198.51.100.15</code></td></tr><tr><td><code>198.51.100.16</code></td></tr><tr><td><code>198.51.100.17</code></td></tr><tr><td><code>198.51.100.18</code></td></tr><tr><td><code>198.51.100.19</code></td></tr><tr><td><code>203.0.113.10</code></td></tr><tr><td><code>203.0.113.11</code></td></tr><tr><td><code>203.0.113.12</code></td></tr><tr><td><code>203.0.113.13</code></td></tr><tr><td><code>203.0.113.14</code></td></tr><tr><td><code>203.0.113.15</code></td></tr></table></details><details class="ioc-group"><summary><b>Dominios</b><span class="count">(2)</span></summary><table><tr><th>Dominio</th></tr><tr><td><code>miner.example.com</code></td></tr><tr><td><code>c2.example.net</code></td></tr></table></details><details class="ioc-group"><summary><b>Caminhos de arquivo</b><span class="count">(10)</span></summary><table><tr><th>Caminho</th></tr><tr><td><code>/tmp/edo</code></td></tr><tr><td><code>/tmp/.dl_12339</code></td></tr><tr><td><code>/var/tmp/.Q4XIY/java</code></td></tr><tr><td><code>/dev/shm/.raiunisoxoxwqeqew/ds</code></td></tr><tr><td><code>/opt/zimbra/data/tmp/.swatchd</code></td></tr><tr><td><code>/opt/zimbra/data/tmp/cstrm7712901009215059509.tmp</code></td></tr><tr><td><code>/opt/zimbra/jetty/webapps/zimbra/public/snmpc_rce.jsp</code></td></tr><tr><td><code>/opt/zimbra/jetty/webapps/zimbra/public/launchImgData.jsp</code></td></tr><tr><td><code>/opt/zimbra/jetty_base/webapps/zimbra/public/snmpc_rce.jsp</code></td></tr><tr><td><code>/opt/zimbra/jetty_base/webapps/zimbra/public/launchImgData.jsp</code></td></tr></table></details><details class="ioc-group"><summary><b>Nomes de arquivo</b><span class="count">(19)</span></summary><table><tr><th>Nome</th></tr><tr><td><code>softwaretech</code></td></tr><tr><td><code>softwaretech.1</code></td></tr><tr><td><code>aakore</code></td></tr><tr><td><code>w3.sh</code></td></tr><tr><td><code>check3.sh</code></td></tr><tr><td><code>p.sh</code></td></tr><tr><td><code>runloop</code></td></tr><tr><td><code>elock</code></td></tr><tr><td><code>elockcb</code></td></tr><tr><td><code>dns-filter</code></td></tr><tr><td><code>coldtechreview</code></td></tr><tr><td><code>xmrig</code></td></tr><tr><td><code>minerd</code></td></tr><tr><td><code>.swatchd</code></td></tr><tr><td><code>.dl_12339</code></td></tr><tr><td><code>.qvV1e</code></td></tr><tr><td><code>.raiunisoxoxwqeqew</code></td></tr><tr><td><code>.rguard</code></td></tr><tr><td><code>.khp</code></td></tr></table></details><p class="small">Total: 57 IOCs carregados.</p></section><section><h2>Limitacoes</h2><ul><li>crontab -u root rc=1: no crontab for root</li></ul></section></main></body></html>
