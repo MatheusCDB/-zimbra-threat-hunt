@@ -113,3 +113,85 @@ protegido, com hash SHA-256 e manifesto — nunca move nem apaga o original.
 ---
 
 ## 🔄 Pipeline
+
+┌─────────────────────────────────────────────────────────────────┐
+│ zimbra_hunt.sh (wrapper interativo)                             │
+│ ├─ Menu: Quick / Full / Módulo específico                       │
+│ ├─ Config: output, --days, --timeout, --no-quarantine           │
+│ └─ Executa: python3 zimbra_forensics.py ...                     │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ zimbra_forensics.py (motor)                                     │
+│                                                                 │
+│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ │
+│ │ identify │──▶│ processes │──▶│ network │ │
+│ └──────────────┘ └──────────────┘ └──────────────┘ │
+│ │ │ │ │
+│ ▼ ▼ ▼ │
+│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ │
+│ │ tmpfiles │──▶│ persistence │──▶│ ssh │ │
+│ └──────────────┘ └──────────────┘ └──────────────┘ │
+│ │ │ │ │
+│ ▼ ▼ ▼ │
+│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ │
+│ │ webshell │──▶│ logs │──▶│ packages │ │
+│ └──────────────┘ └──────────────┘ └──────────────┘ │
+│ │
+│ ┌────────────────────────────────────────────────────┐ │
+│ │ correlate() → calculate_score() → report_() │ │
+│ └────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+│
+▼
+┌─────────────────────────────────────────────────────────────────┐
+│ Saída: evidence_YYYYMMDD_HHMMSS/ │
+│ ├── 00_resumo/resumo.json │
+│ ├── 01_identificacao/sistema.txt + zimbra.txt │
+│ ├── 02_processos/processos.json + suspeitos.json │
+│ ├── 03_rede/conexoes.json │
+│ ├── 04_arquivos_tmp/suspeitos.json │
+│ ├── 05_persistencia/cron.json + systemd.json + ssh_.json │
+│ ├── 06_webshell/suspeitos.json │
+│ ├── 08_logs/resumo.json │
+│ ├── 09_quarentena/ │
+│ ├── 10_analise/pacotes.txt │
+│ ├── relatorio_forense.html ◀── dashboard dark theme │
+│ ├── relatorio_forense.txt ◀── relatório para ticket │
+│ └── manifesto_evidencias.txt ◀── SHA-256 de tudo │
+└─────────────────────────────────────────────────────────────────┘
+
+## 📁 Estrutura de saída
+
+Cada execução gera um diretório `evidence_YYYYMMDD_HHMMSS/` com:
+
+evidence_20261012_103332/
+├── 00_resumo/
+│ └── resumo.json # score, classificação, métricas
+├── 01_identificacao/
+│ ├── sistema.txt
+│ └── zimbra.txt
+├── 02_processos/
+│ ├── processos.json # todos os processos enriquecidos
+│ └── suspeitos.json # apenas os que bateram IOC/padrão
+├── 03_rede/
+│ ├── ss_established.txt
+│ └── conexoes.json
+├── 04_arquivos_tmp/
+│ └── suspeitos.json
+├── 05_persistencia/
+│ ├── cron.json
+│ ├── systemd.json
+│ └── ssh_authorized_keys.json
+├── 06_webshell/
+│ └── suspeitos.json
+├── 08_logs/
+│ ├── journald.txt
+│ └── resumo.json
+├── 09_quarentena/ # cópias read-only de arquivos suspeitos
+├── 10_analise/
+│ └── pacotes.txt
+├── relatorio_forense.html # dashboard HTML (dark theme)
+├── relatorio_forense.txt # relatório em texto
+└── manifesto_evidencias.txt # inventário com SHA-256
