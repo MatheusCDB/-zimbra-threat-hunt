@@ -240,7 +240,7 @@ Correlação visual de incidentes multi-evidência
 
 Botões "Expandir tudo / Recolher tudo"
 
-🔗 [Ver exemplo do relatório](https://htmlpreview.github.io/?https://github.com/MatheusCDB/zimbra-threat-hunt/blob/main/docs/relatorio_forense.html)
+🔗 [Ver exemplo do relatório](https://htmlpreview.github.io/?https://github.com/MatheusCDB/-zimbra-threat-hunt/blob/main/Docs/relatorio_forense.html)
 
 ⚠️ Limitações
 - Não substitui EDR/AV/SIEM — é triagem de IOC, não detecção comportamental
