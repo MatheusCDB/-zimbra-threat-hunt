@@ -92,6 +92,8 @@ protegido, com hash SHA-256 e manifesto — nunca move nem apaga o original.
   do `sudo` legítimo do Zimbra e do cron interno
 - **Pacotes**: inventário RPM/DPKG
 
+---
+
 ### Dashboard
 
 - **Relatório TXT** com resumo executivo, achados, correlações e limitações
@@ -112,60 +114,57 @@ protegido, com hash SHA-256 e manifesto — nunca move nem apaga o original.
 
 ---
 
-## 🔄 Pipeline
-flowchart TD
-    A["scripts/zimbra_hunt.sh<br/>Wrapper interativo<br/><br/>• Menu: Quick / Full / Módulo específico<br/>• Configuração: output, --days, --timeout, --no-quarantine<br/>• Executa o motor Python"] 
+## 🔄 Arquitetura e pipeline
 
-    B["scripts/zimbra_forensics.py<br/>Motor de análise forense"]
-
-    A --> B
-
-    subgraph MODULES["Módulos de análise"]
-        direction TB
-        M1["identify"] --> M2["processes"] --> M3["network"]
-        M4["tmpfiles"] --> M5["persistence"] --> M6["ssh"]
-        M7["webshell"] --> M8["logs"] --> M9["packages"]
-    end
-
-    B --> MODULES
-
-    MODULES --> C["Correlacionar evidências<br/>correlate()"]
-    C --> D["Calcular score de risco<br/>calculate_score()"]
-    D --> E["Gerar relatórios<br/>report()"]
-
-    E --> F["Saída: evidence_YYYYMMDD_HHMMSS/"]
-
-    subgraph OUTPUT["Evidências e artefatos gerados"]
-        direction TB
-        O1["00_resumo/<br/>resumo.json"]
-        O2["01_identificacao/<br/>sistema.txt + zimbra.txt"]
-        O3["02_processos/<br/>processos.json + suspeitos.json"]
-        O4["03_rede/<br/>conexoes.json"]
-        O5["04_arquivos_tmp/<br/>suspeitos.json"]
-        O6["05_persistencia/<br/>cron.json + systemd.json + ssh_*.json"]
-        O7["06_webshell/<br/>suspeitos.json"]
-        O8["08_logs/<br/>resumo.json"]
-        O9["09_quarentena/<br/>Arquivos isolados, quando aplicável"]
-        O10["10_analise/<br/>pacotes.txt"]
-        O11["relatorio_forense.html<br/>Dashboard com tema escuro"]
-        O12["relatorio_forense.txt<br/>Relatório para tickets"]
-        O13["manifesto_evidencias.txt<br/>Hashes SHA-256 das evidências"]
-    end
-
-    F --> OUTPUT
-
-    classDef wrapper fill:#1e3a5f,stroke:#60a5fa,color:#ffffff
-    classDef engine fill:#312e81,stroke:#a78bfa,color:#ffffff
-    classDef module fill:#164e63,stroke:#22d3ee,color:#ffffff
-    classDef analysis fill:#713f12,stroke:#fbbf24,color:#ffffff
-    classDef output fill:#14532d,stroke:#4ade80,color:#ffffff
-
-    class A wrapper
-    class B engine
-    class M1,M2,M3,M4,M5,M6,M7,M8,M9 module
-    class C,D,E analysis
-    class F,O1,O2,O3,O4,O5,O6,O7,O8,O9,O10,O11,O12,O13 output
- 
+```
++-------------------------------------------------------------+
+|  scripts/zimbra_hunt.sh   (wrapper interativo)              |
+|  |- Menu: Quick / Full / Modulo especifico                  |
+|  |- Config: output, --days, --timeout, --no-quarantine      |
+|  '- Executa: python3 scripts/zimbra_forensics.py ...        |
++-----------------------------+-------------------------------+
+                              |
+                              v
++-------------------------------------------------------------+
+|  scripts/zimbra_forensics.py   (motor)                      |
+|                                                             |
+|   +----------+   +----------+   +----------+                |
+|   | identify |-->|processes |-->| network  |                |
+|   +----------+   +----------+   +----------+                |
+|        |              |              |                      |
+|        v              v              v                      |
+|   +----------+   +----------+   +----------+                |
+|   | tmpfiles |-->|persist.  |-->|   ssh    |                |
+|   +----------+   +----------+   +----------+                |
+|        |              |              |                      |
+|        v              v              v                      |
+|   +----------+   +----------+   +----------+                |
+|   | webshell |-->|   logs   |-->| packages |                |
+|   +----------+   +----------+   +----------+                |
+|                                                             |
+|   +---------------------------------------------+           |
+|   | correlate() > calculate_score() > report()  |           |
+|   +---------------------------------------------+           |
++-----------------------------+-------------------------------+
+                              |
+                              v
++-------------------------------------------------------------+
+|  Saida: evidence_YYYYMMDD_HHMMSS/                           |
+|  |- 00_resumo/resumo.json                                   |
+|  |- 01_identificacao/sistema.txt + zimbra.txt               |
+|  |- 02_processos/processos.json + suspeitos.json            |
+|  |- 03_rede/conexoes.json                                   |
+|  |- 04_arquivos_tmp/suspeitos.json                          |
+|  |- 05_persistencia/cron.json + systemd.json + ssh_*.json   |
+|  |- 06_webshell/suspeitos.json                              |
+|  |- 08_logs/resumo.json                                     |
+|  |- 09_quarentena/                                          |
+|  |- 10_analise/pacotes.txt                                  |
+|  |- relatorio_forense.html    <-- dashboard dark theme      |
+|  |- relatorio_forense.txt     <-- relatorio para ticket     |
+|  '- manifesto_evidencias.txt  <-- SHA-256 de tudo           |
++-------------------------------------------------------------+
+```
 ---
 
 📂 Estrutura dos resultados
