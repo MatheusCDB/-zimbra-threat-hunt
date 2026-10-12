@@ -23,7 +23,6 @@
 - [Pipeline](#-pipeline)
 - [Estrutura de saída](#-estrutura-de-saída)
 - [Instalação](#-instalação)
-- [Uso](#-uso)
 - [IOCs configuráveis](#-iocs-configuráveis)
 - [Dashboard HTML](#-dashboard-html)
 - [Limitações](#-limitações)
@@ -195,3 +194,53 @@ evidence_20261012_103332/
 ├── relatorio_forense.html # dashboard HTML (dark theme)
 ├── relatorio_forense.txt # relatório em texto
 └── manifesto_evidencias.txt # inventário com SHA-256
+
+---
+
+## 🚀 Instalação
+
+Toda a instalação requisitos e como utilizar e flags estão em /Docs/implantacao.md
+
+---
+
+## 🚀 Instalação
+
+Toda a inteligência de detecção vem de /Scripts/iocs.json.
+
+- IPs
+- Domains
+Ports
+Paths
+File_names
+process_patterns
+log_patterns
+ssh_indicators
+
+## 📊 Dashboard HTML
+O relatório HTML é autocontido — não requer internet, não carrega fontes
+externas, funciona offline. Recursos:
+
+Tema dark baseado em GitHub Dark
+Cards de severidade com contagem por nível
+Achados colapsáveis: CRITICO expandido, demais recolhidos
+Seção de IOCs com <details> por categoria (IPs, domínios, caminhos...)
+Correlação visual de incidentes multi-evidência
+Botões "Expandir tudo / Recolher tudo"
+
+🔗 Preview: examples/relatorio_forense.html
+
+⚠️ Limitações
+- Não substitui EDR/AV e nem SIEM — é triagem de IOC, não detecção comportamental
+- Não cobre análise de memória volátil, rootkits em kernel, ou comprometimento
+de firmware
+- Falsos negativos possíveis se o atacante usou IOCs ainda não catalogados
+em iocs.json
+- Timeout padrão de 120s por comando — em servidores muito grandes, ajuste
+--timeout
+-Logs rotacionados: só o arquivo atual é analisado; .gz/.1/.2 não
+
+📄 Licença
+Este projeto está sob a licença MIT. Veja LICENSE para detalhes.
+
+Autor
+Matheus C. D. B. — @MatheusCDB
