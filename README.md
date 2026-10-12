@@ -259,7 +259,7 @@ em iocs.json
 - Abra um Pull Request
 
 📄 Licença
-Este projeto está sob a licença MIT. Veja [LICENSE](https://license/)  para detalhes.
+Este projeto está sob a licença MIT. Veja [LICENSE](LICENSE) para detalhes.
 
 Autor
 Matheus C. D. B. — @MatheusCDB
