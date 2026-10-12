@@ -1,0 +1,71 @@
+{
+  "meta": {
+    "version": "1.1",
+    "updated_at": "2026-10-09",
+    "source": "incidentes anteriores",
+    "notes": "IOCs historicos. Whitelists de ruido Zimbra embutidas no codigo."
+  },
+  "process_patterns": [
+    "xmrig", "minerd", "softwaretech", "aakore", "coldtechreview",
+    "w3\\.sh", "runloop", "elockcb", "dns-filter",
+    "check3\\.sh", "p\\.sh",
+    "/dev/tcp", "bash -i", "nc -e", "ncat"
+  ],
+  "file_names": [
+    "softwaretech", "softwaretech.1", "aakore",
+    "w3.sh", "check3.sh", "p.sh", "runloop", "elock", "elockcb",
+    "dns-filter", "coldtechreview", "xmrig", "minerd",
+    ".swatchd", ".dl_12339", ".qvV1e", ".raiunisoxoxwqeqew",
+    ".rguard", ".khp"
+  ],
+  "paths": [
+    "/tmp/edo",
+    "/tmp/.dl_12339",
+    "/var/tmp/.Q4XIY/java",
+    "/dev/shm/.raiunisoxoxwqeqew/ds",
+    "/opt/zimbra/data/tmp/.swatchd",
+    "/opt/zimbra/data/tmp/cstrm7712901009215059509.tmp",
+    "/opt/zimbra/jetty/webapps/zimbra/public/snmpc_rce.jsp",
+    "/opt/zimbra/jetty/webapps/zimbra/public/launchImgData.jsp",
+    "/opt/zimbra/jetty_base/webapps/zimbra/public/snmpc_rce.jsp",
+    "/opt/zimbra/jetty_base/webapps/zimbra/public/launchImgData.jsp"
+  ],
+  "ips": [
+    "139.59.79.248", "128.199.160.148", "24.199.115.217",
+    "161.35.164.151", "146.190.82.194", "143.198.8.47",
+    "209.38.78.95", "138.197.87.49", "64.227.131.175",
+    "159.65.150.164", "45.55.211.15", "207.154.195.131",
+    "134.209.110.227", "159.203.119.173", "164.92.67.5",
+    "167.172.248.103", "174.138.25.56", "159.223.85.186",
+    "143.244.145.109", "45.55.125.94", "64.226.80.243",
+    "104.248.241.169", "129.212.249.220", "104.243.43.115",
+    "80.96.113.59", "64.89.163.212"
+  ],
+  "domains": [
+    "jp-tyo-bgp-1.ofalias.net",
+    "pool.supportxmr.com"
+  ],
+  "ports": [2222, 41669],
+  "sha256": [],
+  "ssh_indicators": [
+    {"type": "comment", "value": "shadow@hackerone.com",
+     "context": "chave nao autorizada observada em incidente anterior"},
+    {"type": "fingerprint_sha256",
+     "value": "Ox3ApJg2Ep8kDTruUOT12sNihR3QqNHxeZygjXiGY18",
+     "context": "fingerprint informada em investigacao anterior"}
+  ],
+  "log_patterns": [
+    "(exec|spawn|CMD|command)[^\\n]{0,80}/tmp/",
+    "(exec|spawn|CMD|command)[^\\n]{0,80}/dev/shm/",
+    "softwaretech", "xmrig", "minerd", "w3\\.sh", "dns-filter",
+    "Failed password", "Accepted publickey",
+    "COMMAND=.*?(/tmp/|/dev/shm/|/var/tmp/)"
+  ],
+  "webshell_patterns": [
+    "Runtime\\.getRuntime\\s*\\(\\s*\\)\\s*\\.exec",
+    "ProcessBuilder",
+    "Base64\\.getDecoder",
+    "Class\\.forName\\s*\\(\\s*request\\.getParameter",
+    "defineClass\\s*\\("
+  ]
+}
