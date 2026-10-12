@@ -239,6 +239,9 @@ em iocs.json
 --timeout
 -Logs rotacionados: só o arquivo atual é analisado; .gz/.1/.2 não
 
+🔗 Preview do Dashboard
+ Clique aqui para explorar o relatório de exemplo
+
 📄 Licença
 Este projeto está sob a licença MIT. Veja LICENSE para detalhes.
 
