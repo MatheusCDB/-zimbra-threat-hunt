@@ -224,7 +224,7 @@ Manutenção: adicione novos IOCs ao arquivo sem alterar o código. A
 validação de regex roda no carregamento — padrões inválidos são reportados
 em LIMITAÇÕES do relatório.
 
-📊 Dashboard HTML
+## 📊 Dashboard HTML
 O relatório HTML é autocontido — não requer internet, não carrega fontes
 externas, funciona offline. Recursos:
 
