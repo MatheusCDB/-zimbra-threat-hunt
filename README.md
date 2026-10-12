@@ -198,7 +198,7 @@ evidence_20261012_103332/
 Todos os requisitos, passo a passo de instalação, flags de linha de comando,
 exemplos de execução, automação via cron e troubleshooting estão em:
 
-📄 **[docs/IMPLANTACAO.md](docs/IMPLANTACAO.md)**
+📄 **[docs/IMPLANTACAO.md](/Docs/Implantacao.md)**
 
 ---
 
