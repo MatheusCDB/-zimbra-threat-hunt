@@ -144,60 +144,54 @@ protegido, com hash SHA-256 e manifesto — nunca move nem apaga o original.
 +-----------------------------+-------------------------------+
                               |
                               v
-+-------------------------------------------------------------+
-|  Saida: evidence_YYYYMMDD_HHMMSS/                           |
-|  |- 00_resumo/resumo.json                                   |
-|  |- 01_identificacao/sistema.txt + zimbra.txt               |
-|  |- 02_processos/processos.json + suspeitos.json            |
-|  |- 03_rede/conexoes.json                                   |
-|  |- 04_arquivos_tmp/suspeitos.json                          |
-|  |- 05_persistencia/cron.json + systemd.json + ssh_*.json   |
-|  |- 06_webshell/suspeitos.json                              |
-|  |- 08_logs/resumo.json                                     |
-|  |- 09_quarentena/                                          |
-|  |- 10_analise/pacotes.txt                                  |
-|  |- relatorio_forense.html    <-- dashboard dark theme      |
-|  |- relatorio_forense.txt     <-- relatorio para ticket     |
-|  '- manifesto_evidencias.txt  <-- SHA-256 de tudo           |
-+-------------------------------------------------------------+
+                    evidence_YYYYMMDD_HHMMSS/
 ```
+
+Os 9 módulos são independentes e podem ser executados individualmente via
+`--module NOME`. A saída completa está detalhada em
+[Estrutura dos resultados](#-estrutura-dos-resultados).
+
 ---
 
-📂 Estrutura dos resultados
+## 📂 Estrutura dos resultados
 
-Cada execução gera um diretório evidence_YYYYMMDD_HHMMSS/, contendo as evidências coletadas, os resultados das análises e os relatórios forenses.
+Cada execução gera um diretório `evidence_YYYYMMDD_HHMMSS/` com todos os
+artefatos forenses:
 
+```
 evidence_20261012_103332/
 ├── 00_resumo/
-│ └── resumo.json # score, classificação, métricas
+│   └── resumo.json               # score, classificação, métricas
 ├── 01_identificacao/
-│ ├── sistema.txt
-│ └── zimbra.txt
+│   ├── sistema.txt               # hostname, OS, kernel, IPs, uptime
+│   └── zimbra.txt                # versão, status do zmcontrol, webapps
 ├── 02_processos/
-│ ├── processos.json # todos os processos enriquecidos
-│ └── suspeitos.json # apenas os que bateram IOC/padrão
+│   ├── processos.json            # todos os processos enriquecidos
+│   └── suspeitos.json            # apenas os que bateram IOC/padrão
 ├── 03_rede/
-│ ├── ss_established.txt
-│ └── conexoes.json
+│   ├── ss_established.txt        # saída crua do ss -tnp
+│   └── conexoes.json             # conexões parseadas + matching IOC
 ├── 04_arquivos_tmp/
-│ └── suspeitos.json
+│   └── suspeitos.json            # arquivos em tmp com razões e hash
 ├── 05_persistencia/
-│ ├── cron.json
-│ ├── systemd.json
-│ └── ssh_authorized_keys.json
+│   ├── cron.json                 # cron de sistema e de usuário
+│   ├── systemd.json              # units com ExecStart suspeito
+│   └── ssh_authorized_keys.json  # chaves SSH com fingerprint
 ├── 06_webshell/
-│ └── suspeitos.json
+│   └── suspeitos.json            # JSP/JSPX com padrões de RCE
 ├── 08_logs/
-│ ├── journald.txt
-│ └── resumo.json
-├── 09_quarentena/ # cópias read-only de arquivos suspeitos
+│   ├── journald.txt              # últimas linhas do journalctl
+│   └── resumo.json               # hits por arquivo e por padrão
+├── 09_quarentena/                # cópias read-only de arquivos suspeitos
 ├── 10_analise/
-│ └── pacotes.txt
-├── relatorio_forense.html # dashboard HTML (dark theme)
-├── relatorio_forense.txt # relatório em texto
-└── manifesto_evidencias.txt # inventário com SHA-256
+│   └── pacotes.txt               # inventário RPM/DPKG
+├── relatorio_forense.html        # dashboard HTML (dark theme)
+├── relatorio_forense.txt         # relatório em texto (para ticket)
+└── manifesto_evidencias.txt      # inventário SHA-256 de tudo
+```
 
----
+> **Nota:** os diretórios `07_iocs/` e `09_quarentena/` podem ficar vazios
+> se o `--no-quarantine` for usado ou nenhum IOC for carregado.
 
 ## 🚀 Instalação e uso
 
